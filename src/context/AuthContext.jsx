@@ -1,8 +1,10 @@
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export const AuthContext = createContext(null);
+const AuthContext = createContext(null);
 
 export default function AuthProvider({ children }) {
+  const navigate = useNavigate();
   const [user, setUser] = useState(
     localStorage.getItem("currentUserEmail")
       ? { email: localStorage.getItem("currentUserEmail") }
@@ -27,6 +29,7 @@ export default function AuthProvider({ children }) {
   function logout() {
     localStorage.removeItem("currentUserEmail");
     setUser(null);
+    navigate("/auth");
   }
 
   function longin(email, password) {
@@ -48,4 +51,10 @@ export default function AuthProvider({ children }) {
       {children}
     </AuthContext.Provider>
   );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+
+  return context;
 }
